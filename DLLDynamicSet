@@ -1,7 +1,7 @@
 /** 
   * A list implemented using a sorted doubly-linked list and using recursive methods
   * @author         Amy Takayesu 
-  * @class       	ICS311
+  * @class               ICS311
   * @date           October 17, 2013
   */
 
@@ -10,7 +10,7 @@ public class DLLDynamicSet<E> implements DynamicSet{
           /** 
             * A node in a doubly-linked list
             * @author       Amy Takayesu 
-            * @class       	ICS311
+            * @class               ICS311
             * @date         October 17, 2013
             */
           
@@ -42,26 +42,26 @@ public class DLLDynamicSet<E> implements DynamicSet{
             }
             
             public Object getItem() {
-            	return this.item;
+                    return this.item;
             }
             
             public void deleteItem() {
-            	this.item = null;
+                    this.item = null;
             }
             public void setNext(LinkedNode<T> node) {
-            	this.next = node;
+                    this.next = node;
             }
             
             public void setPrev(LinkedNode<T> node) {
-            	this.prev = node;
+                    this.prev = node;
             }
             
             public LinkedNode<T> getNext() {
-            	return this.next;
+                    return this.next;
             }
             
             public LinkedNode<T> getPrev() {
-            	return this.prev;
+                    return this.prev;
             }
           }
   // end of the LinkedNode definition
@@ -102,42 +102,57 @@ public class DLLDynamicSet<E> implements DynamicSet{
    * @param the value to add and the element to set
    */
  public void insert(String value, Object e) {
-	 LinkedNode<E> node = head;
-	 LinkedNode<E> nodeprev = null;
-	 LinkedNode<E> newNode = null;
-	 
-	 if(node == null) {
-		 newNode = new LinkedNode<E>(value);
-		 head = newNode;
-	 }
-	 else {
-		 while((node != null) && (node.item.compareToIgnoreCase(value) <= 0)) {
-			 nodeprev = node;
-			 node = node.next;
-		 }
-		 if(node == null) {
-			 newNode = new LinkedNode<E>(value, null, nodeprev);
-			 node = newNode;
-			 nodeprev.setNext(node);
-		 }
-		 else {
-			 newNode= new LinkedNode<E>(value, node, nodeprev);
-			 node.setPrev(newNode);
-			 nodeprev.setNext(node.prev);
-		 }
-	 }
-	 if(newNode != head && newNode.getNext() != null) {
-	  //for testing purposes
-      //System.out.println("Prev: " + newNode.getPrev().getItem()); 
- 	  //System.out.println("Succ: " + newNode.getNext().getItem()); 
-	 }
+         LinkedNode<E> node = head;
+         LinkedNode<E> nodeprev = null;
+         LinkedNode<E> newNode = null;
+         
+         if(node == null) {
+                 newNode = new LinkedNode<E>(value);
+                 head = newNode;
+         }
+         else {
+                 while((node != null) && (node.item.compareToIgnoreCase(value) <= 0)) {
+                         nodeprev = node;
+                         node = node.next;
+                 }
+                 //case: empty list
+                 if(node == null) {
+                         newNode = new LinkedNode<E>(value, null, nodeprev);
+                         node = newNode;
+                         nodeprev.setNext(node);
+                 }
+                 else {
+                	 	//case: insert in middle of list
+                	 	 if(node != head && node.getNext() != null) {
+                	 		 newNode= new LinkedNode<E>(value, node, nodeprev);
+                	 		 node.setPrev(newNode);
+                	 		 nodeprev.setNext(node.prev);
+                	 	 }
+                	 	 //case: add to start of list
+                	 	 else if(node == head) {
+                	 		 newNode = new LinkedNode<E>(value, node, null);
+                	 		 head.setPrev(newNode);
+                	 		 head = newNode;
+                	 	 }
+                	 	 //add to end of list
+                	 	 else {
+                	 		 newNode = new LinkedNode<E>(value, null, node);
+                	 		 node.setNext(newNode);
+                	 	 }
+                 }
+         }
+         if(newNode != head && newNode.getNext() != null) {
+          //for testing purposes
+        //System.out.println("Prev: " + newNode.getPrev().getItem()); 
+           //System.out.println("Succ: " + newNode.getNext().getItem()); 
+         }
  }
    
   /** public wrapper method, calls the private recursive method 
     * @param the object to remove
     */
   public void delete(String value) {
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     LinkedNode<E> node = (LinkedNode<E>)search(head, value);
     node.getPrev().setNext(node.getNext());
     node.getNext().setPrev(node.getNext());
@@ -149,13 +164,14 @@ public class DLLDynamicSet<E> implements DynamicSet{
    */
  public Object search(LinkedNode<E> node, String value) {
    if(node == null){
-	   return null;
+           return null;
    }
+   //stackoverflow occurs after this point
    else if (node.item.equals(value)) {
-	      return node;  // match, so remove this node
+              return node;  // match, so remove this node
    }
    else {
-	   return search(node.next, value);
+           return search(node.next, value);
    }
  }
  
@@ -163,55 +179,55 @@ public class DLLDynamicSet<E> implements DynamicSet{
   * @param the key to search for
   */
 public Object search(String value) {
-	@SuppressWarnings("unchecked")
-	LinkedNode<E> node = (LinkedNode<E>)search(head, value);
-	return node.getItem();
+        @SuppressWarnings("unchecked")
+        LinkedNode<E> node = (LinkedNode<E>)search(head, value);
+        return node.getItem();
 }
  
  /** Find minimum (head) of list
   * @param none
   */
 public Object minimum(){
-	if(head != null) {
-		return head.getItem();
-	}
-	else {
-		return null;
-	}
+        if(head != null) {
+                return head.getItem();
+        }
+        else {
+                return null;
+        }
 }
 
 /** Find maximum (tail) of list
  * @param none
  */
 public Object maximum() {
-	LinkedNode<E> node = head;
-	if(head == null) {
-		return null;
-	}
-	else {
-		while(node.next != null) {
-			node = node.next;
-		}
-		return node.getItem();
-	}
+        LinkedNode<E> node = head;
+        if(head == null) {
+                return null;
+        }
+        else {
+                while(node.next != null) {
+                        node = node.next;
+                }
+                return node.getItem();
+        }
 }
 
 /** Find the successor of the given value in the list
  * @param the object to find the successor to
  */
 public Object successor(String value) {
-	@SuppressWarnings("unchecked")
-	LinkedNode<E> node = (LinkedNode<E>)search(head, value);
-	return node.getNext().getItem();
+        @SuppressWarnings("unchecked")
+        LinkedNode<E> node = (LinkedNode<E>)search(head, value);
+        return node.getNext().getItem();
 }
 
 /** Find the predecessor of the given value in the list
  * @param the object to find the predeccessor to
  */
 public Object predecessor(String value) {
-	@SuppressWarnings("unchecked")
-	LinkedNode<E> node = (LinkedNode<E>)search(head,value);
-	return node.getPrev().getItem();
+        @SuppressWarnings("unchecked")
+        LinkedNode<E> node = (LinkedNode<E>)search(head,value);
+        return node.getPrev().getItem();
 }
  
 
