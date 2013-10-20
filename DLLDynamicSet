@@ -141,22 +141,21 @@ public class DLLDynamicSet<E> implements DynamicSet{
                 	 	 }
                  }
          }
-         if(newNode != head && newNode.getNext() != null) {
-          //for testing purposes
-        //System.out.println("Prev: " + newNode.getPrev().getItem()); 
-           //System.out.println("Succ: " + newNode.getNext().getItem()); 
-         }
  }
    
   /** public wrapper method, calls the private recursive method 
     * @param the object to remove
     */
   public void delete(String value) {
-    @SuppressWarnings("unchecked")
-    LinkedNode<E> node = (LinkedNode<E>)search(head, value);
-    node.getPrev().setNext(node.getNext());
-    node.getNext().setPrev(node.getNext());
-    node.deleteItem();
+    try {
+    	LinkedNode<E> node = (LinkedNode<E>)search(head, value);
+    	node.getPrev().setNext(node.getNext());
+    	node.getNext().setPrev(node.getNext());
+    	node.deleteItem();
+    }
+    catch(Exception e) {
+    	System.out.println("Item could not be deleted because item could not be found.");
+    }
   }
   
   /** Finds an Object with the key k and returns a pointer to it, or null if not found 
@@ -167,7 +166,13 @@ public class DLLDynamicSet<E> implements DynamicSet{
            return null;
    }
    while(!node.item.equals(value)) {
-	   node = node.next;
+	   if(node.next != null) {
+		   node = node.next;
+	   }
+	   //item does not exist in list
+	   else {
+		   return null;
+	   }
    }
    return node;
  }
