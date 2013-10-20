@@ -9,9 +9,11 @@ import java.util.*;
 import java.io.*;
 
 public class Driver {
-	private static int lineCount = 0;
+	private static long lineCount = 0;
 	private static String[] tokens = null;
-	private static DynamicSet ds;
+	private static DynamicSet dll = new DLLDynamicSet();
+	private static DynamicSet sl = new SkipListDynamicSet();
+	private static DynamicSet bst = new BSTDynamicSet();
 	
 	public static void main(String[] args) {
 		System.out.println("==========================================");
@@ -20,27 +22,7 @@ public class Driver {
 		//Read in input file and store in array
 		getFileInput();
 		System.out.println("\nReading in file...\n");
-		
-		System.out.println("Enter the number of the command that you would like to run:");
-		System.out.println("(1) Runtest: Runs insert, search, successor, predecessor, minimum, and maximum on the file and prints a table of runtimes.");
-		System.out.println("(2) Insert: Insert items into the file.");
-		System.out.println("(3) Search: Search for an item in the file.");
-		System.out.println("(4) Delete: Delete an item from the file.");
-		System.out.println("(5) Predecessor: Find the predecessor of a certain key in the file.");
-		System.out.println("(6) Successor: Find the successor of a certain key in the file.");
-		System.out.println("(7) Minimum: Find the smallest (listed first alphabetically) key in the file.");
-		System.out.println("(8) Maximum: Find the largest (listed last alphabetically) key in the file");
-
-		Scanner keybd = new Scanner(System.in);
-		int choice = keybd.nextInt();
-		String input; 
-		switch(choice) {
-		case 1:	runtest();
-				break;
-		case 2:	System.out.println("Enter the key that you would like to insert.");
-				input = keybd.next();
-				
-		}
+		runCommands();
 	}
 	
 	  /** Gets user input for file name, reads in to an array
@@ -63,7 +45,7 @@ public class Driver {
 				lineCount++;
 			}
 			//store elements into array by line
-			tokens = new String[lineCount];
+			tokens = new String[(int)lineCount];
 			fstream = new FileInputStream(filename);
 			in = new DataInputStream(fstream);
 			br = new BufferedReader(new InputStreamReader(in));
@@ -93,18 +75,15 @@ public class Driver {
 		
 		/*LINKED LIST*/
 		System.out.print("Linked List |");
-		ds = new DLLDynamicSet();
-		DynamicSetCalls(ds);	
+		DynamicSetCalls(dll);	
 		
 		/*SKIP LIST*/
 		System.out.print("Skip List   |");
-		ds = new SkipListDynamicSet();
-		DynamicSetCalls(ds);
+		DynamicSetCalls(sl);
 		
 		/*BINARY TREE*/
 		System.out.print("Binary Tree |");
-		ds = new BSTDynamicSet();
-		DynamicSetCalls(ds);
+		DynamicSetCalls(bst);
 	}
 	
 	public static void DynamicSetCalls(DynamicSet ds) {		
@@ -127,7 +106,7 @@ public class Driver {
 		
 		/*Search*/
 		for(int i = 0; i < 10; i ++) {
-			temp = tokens[rand.nextInt(lineCount - 1)];
+			temp = tokens[rand.nextInt((int)lineCount - 1)];
 			stopwatch.start();
 			ds.search(temp);
 			stopwatch.stop();
@@ -179,5 +158,75 @@ public class Driver {
 		total = 0;
 
 		System.out.println("\n======================================================================================================================================");
+	}
+	
+	public static void runCommands() {
+		System.out.println("Enter the number of the command that you would like to run:");
+		System.out.println("(1) Runtest: Runs insert, search, successor, predecessor, minimum, and maximum on the file and prints a table of runtimes.");
+		System.out.println("(2) Insert: Insert items into the file.");
+		System.out.println("(3) Search: Search for an item in the file.");
+		System.out.println("(4) Delete: Delete an item from the file.");
+		System.out.println("(5) Predecessor: Find the predecessor of a certain key in the file.");
+		System.out.println("(6) Successor: Find the successor of a certain key in the file.");
+		System.out.println("(7) Minimum: Find the smallest (listed first alphabetically) key in the file.");
+		System.out.println("(8) Maximum: Find the largest (listed last alphabetically) key in the file");
+		System.out.println("(9) Exit: Exit the program.");
+
+		Scanner keybd = new Scanner(System.in);
+		int choice = keybd.nextInt();
+		String input; 
+		switch(choice) {
+		case 1:	runtest();
+				break;
+		case 2:	System.out.println("Enter the key that you would like to insert.");
+				input = keybd.next();
+				try{
+					dll.insert(input, null);
+					sl.insert(input, null);
+					bst.insert(input, null);
+					System.out.println("Successfully Inserted!");
+				}
+				catch(Exception e){
+					System.out.println("There was a problem inserting your key.");
+				}				
+		case 3:	System.out.println("Enter the key that you would like to search for.");
+				input = keybd.next();
+				System.out.println("Doubly Linked List returned: " + dll.search(input));
+				System.out.println("Skip List returned: " + sl.search(input));
+				System.out.println("Binary Search Tree returned:" + bst.search(input));
+		case 4:	System.out.println("Enter the key that you would like to delete.");
+				input = keybd.next();
+				try{
+					dll.delete(input);
+					sl.delete(input);
+					bst.delete(input);
+					System.out.println("Successfully Deleted!");
+				}
+				catch(Exception e){
+					System.out.println("There was a problem deleting your key.");
+				}
+		case 5:	System.out.println("Enter the key that you would like to find the predecessor of.");
+				input = keybd.next();
+				System.out.println("Doubly Linked List returned: " + dll.predecessor(input));
+				System.out.println("Skip List returned: " + sl.predecessor(input));
+				System.out.println("Binary Search Tree returned:" + bst.predecessor(input));
+		case 6:	System.out.println("Enter the key that you would like to find the successor of.");
+				input = keybd.next();
+				System.out.println("Doubly Linked List returned: " + dll.successor(input));
+				System.out.println("Skip List returned: " + sl.successor(input));
+				System.out.println("Binary Search Tree returned:" + bst.successor(input));
+		case 7:	System.out.println("Finding the minimum...");
+				System.out.println("Doubly Linked List returned: " + dll.minimum());
+				System.out.println("Skip List returned: " + sl.minimum());
+				System.out.println("Binary Search Tree returned:" + bst.minimum());
+		case 8:	System.out.println("Finding the maximum...");
+				System.out.println("Doubly Linked List returned: " + dll.maximum());
+				System.out.println("Skip List returned: " + sl.maximum());
+				System.out.println("Binary Search Tree returned:" + bst.maximum());
+		case 9:	System.out.println("Good Bye!");
+				System.exit(0);
+		default:System.out.println("Invalid input. Please enter one of the input numbers provided.");				
+		}
+		runCommands();
 	}
 }
