@@ -1,0 +1,183 @@
+/** 
+  * Produces a list of runtimes for different functions on different dynamic sets (DLL, BST, SkipList)
+  * @author         Amy Takayesu 
+  * @class          ICS311
+  * @date           October 17, 2013
+  */
+
+import java.util.*;
+import java.io.*;
+
+public class Driver {
+	private static int lineCount = 0;
+	private static String[] tokens = null;
+	private static DynamicSet ds;
+	
+	public static void main(String[] args) {
+		System.out.println("==========================================");
+		System.out.println("* Welcome to the Battle of Dynamic Sets! *");
+		System.out.println("==========================================");
+		//Read in input file and store in array
+		getFileInput();
+		System.out.println("\nReading in file...\n");
+		
+		System.out.println("Enter the number of the command that you would like to run:");
+		System.out.println("(1) Runtest: Runs insert, search, successor, predecessor, minimum, and maximum on the file and prints a table of runtimes.");
+		System.out.println("(2) Insert: Insert items into the file.");
+		System.out.println("(3) Search: Search for an item in the file.");
+		System.out.println("(4) Delete: Delete an item from the file.");
+		System.out.println("(5) Predecessor: Find the predecessor of a certain key in the file.");
+		System.out.println("(6) Successor: Find the successor of a certain key in the file.");
+		System.out.println("(7) Minimum: Find the smallest (listed first alphabetically) key in the file.");
+		System.out.println("(8) Maximum: Find the largest (listed last alphabetically) key in the file");
+
+		Scanner keybd = new Scanner(System.in);
+		int choice = keybd.nextInt();
+		String input; 
+		switch(choice) {
+		case 1:	runtest();
+				break;
+		case 2:	System.out.println("Enter the key that you would like to insert.");
+				input = keybd.next();
+				
+		}
+	}
+	
+	  /** Gets user input for file name, reads in to an array
+	    * @param none
+	    * @return void
+	    */
+	public static void getFileInput() {
+		System.out.println("\nPlease enter the name of the file to read.");
+		//Read in input file
+		Scanner input = new Scanner(System.in);
+		String filename = input.next();
+		int k = 0;
+		try{
+			FileInputStream fstream = new FileInputStream(filename);
+			DataInputStream in = new DataInputStream(fstream);
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			String strLine;
+			//get size of file
+			while ((strLine = br.readLine()) != null)   {
+				lineCount++;
+			}
+			//store elements into array by line
+			tokens = new String[lineCount];
+			fstream = new FileInputStream(filename);
+			in = new DataInputStream(fstream);
+			br = new BufferedReader(new InputStreamReader(in));
+			while((strLine = br.readLine()) != null) {
+				tokens[k] = strLine;
+				k++;
+			}
+			in.close();
+		}catch (Exception e){
+			System.out.println("ERROR reading in file. Make sure you enter a valid file name!");
+			getFileInput();
+		}
+	}
+	  /** Gets the data from the file read into the array and inserts it into each of the 
+	   	* Dynamic Set implementations, tests each operation and prints the runtimes in a table
+	    * @param none
+	    * @return void
+	    */	
+	public static void runtest() {	
+		System.out.println("The entries for Insert, Search, Predecessor, and Successor in the table will be of the form: | min / avg / max |");
+		System.out.println("The entries for Minimum and Maximum will only show one constant runtime.");
+		System.out.println("The runtimes listed are in nanoseconds.");
+		System.out.println("Size: " + lineCount);
+		System.out.println("======================================================================================================================================");
+		System.out.println("            |         Insert         |         Search         |       Predecessor      |       Successor        | Minimum | Maximum |");
+		System.out.println("======================================================================================================================================");
+		
+		/*LINKED LIST*/
+		System.out.print("Linked List |");
+		ds = new DLLDynamicSet();
+		DynamicSetCalls(ds);	
+		
+		/*SKIP LIST*/
+		System.out.print("Skip List   |");
+		ds = new SkipListDynamicSet();
+		DynamicSetCalls(ds);
+		
+		/*BINARY TREE*/
+		System.out.print("Binary Tree |");
+		ds = new BSTDynamicSet();
+		DynamicSetCalls(ds);
+	}
+	
+	public static void DynamicSetCalls(DynamicSet ds) {		
+		Timing stopwatch = new Timing();
+		long total = 0;
+		Random rand = new Random();
+		String[] randArray = new String[10];
+		String temp = "";
+
+        /*Insert*/
+		for(int i = 0; i < lineCount; i++) {
+			stopwatch.start();
+			ds.insert(tokens[i], null);
+			stopwatch.stop();
+			total = total + stopwatch.getTime();
+		}
+		System.out.print(String.format("%25s", stopwatch.getMin() + "/" + total/lineCount + "/" + stopwatch.getMax() + "|"));
+		stopwatch.reset();
+		total = 0;
+		
+		/*Search*/
+		for(int i = 0; i < 10; i ++) {
+			temp = tokens[rand.nextInt(lineCount - 1)];
+			stopwatch.start();
+			ds.search(temp);
+			stopwatch.stop();
+			randArray[i] = temp;
+			total = total + stopwatch.getTime();
+		}
+		System.out.print(String.format("%25s", stopwatch.getMin() + "/" + total/lineCount + "/" + stopwatch.getMax() + "|"));
+		stopwatch.reset();
+		total = 0;
+		
+		/*Predecessor*/
+		for(int i = 0; i < 10; i++) {
+			stopwatch.start();
+			ds.predecessor(randArray[i]);
+			stopwatch.stop();
+			total = total + stopwatch.getTime();
+		}
+		System.out.print(String.format("%25s", stopwatch.getMin() + "/" + total/lineCount + "/" + stopwatch.getMax() + "|"));
+		stopwatch.reset();
+		total = 0;
+		
+		/*Successor*/
+		for(int i = 0; i < 10; i++) {
+			stopwatch.start();
+			ds.successor(randArray[i]);
+			stopwatch.stop();
+			total = total + stopwatch.getTime();
+		}
+		System.out.print(String.format("%25s", stopwatch.getMin() + "/" + total/lineCount + "/" + stopwatch.getMax() + "|"));
+		stopwatch.reset();
+		total = 0;
+		
+		/*Minimum*/
+		stopwatch.start();
+		ds.minimum();
+		stopwatch.stop();
+		
+		System.out.print(String.format("%10s", stopwatch.getMin() + "|"));
+		stopwatch.reset();
+		total = 0;
+		
+		/*Maximum*/
+		stopwatch.start();
+		ds.minimum();
+		stopwatch.stop();
+		
+		System.out.print(String.format("%10s", stopwatch.getMin() + "|"));
+		stopwatch.reset();
+		total = 0;
+
+		System.out.println("\n======================================================================================================================================");
+	}
+}
