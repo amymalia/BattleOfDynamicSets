@@ -343,28 +343,6 @@ public class BSTDynamicSet<T extends java.lang.Comparable<T>> implements Dynamic
 			return node.item.toString() + "(" + toString(node.left) + ", " + toString(node.right) + ")";
 	    }
 	    
-	    public static void main(String[] arguments) {
-	    BSTDynamicSet<String> tree = new BSTDynamicSet<String>();
-	    tree.insert("Banana", null);
-	    tree.insert("Peanut", null);
-	    tree.insert("Apples", null);
-	    tree.insert("Zoo", null);
-	    tree.insert("Starfruit", null);
-	    tree.insert("Anaconda", null);
-	    tree.insert("Peaches", null);
-	    
-	    System.out.println(tree.toString());
-	    
-	    System.out.println("Size: " + tree.size());
-	    tree.delete("Peanut");
-	    System.out.println(tree.toString());
-	    System.out.println("Search for Anaconda: " + tree.search("Anaconda"));
-	    System.out.println("Minimum: " + tree.minimum());
-	    System.out.println("Maximum: " + tree.maximum());
-	    System.out.println("Successor to Zoo: " + tree.successor("Zoo"));
-	    System.out.println("Predecessor to Zoo: " + tree.predecessor("Zoo"));
-	    }
-
 
 	    /* an iterator class to iterate over binary trees
 	     * @author	Biagioni, Edoardo
