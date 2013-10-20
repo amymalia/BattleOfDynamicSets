@@ -1,5 +1,5 @@
 /** 
-  * A list implemented using a sorted doubly-linked list and using recursive methods
+  * A list implemented using a sorted doubly-linked list 
   * @author         Amy Takayesu 
   * @class               ICS311
   * @date           October 17, 2013
@@ -166,13 +166,10 @@ public class DLLDynamicSet<E> implements DynamicSet{
    if(node == null){
            return null;
    }
-   //stackoverflow occurs after this point
-   else if (node.item.equals(value)) {
-              return node;  // match, so remove this node
+   while(!node.item.equals(value)) {
+	   node = node.next;
    }
-   else {
-           return search(node.next, value);
-   }
+   return node;
  }
  
  /** Finds an Object with the key k and returns a pointer to it, or null if not found 
@@ -218,7 +215,12 @@ public Object maximum() {
 public Object successor(String value) {
         @SuppressWarnings("unchecked")
         LinkedNode<E> node = (LinkedNode<E>)search(head, value);
-        return node.getNext().getItem();
+        if(node.getNext() != null) {
+        	return node.getNext().getItem();
+        }
+        else {
+        	return null;
+        }
 }
 
 /** Find the predecessor of the given value in the list
@@ -227,7 +229,12 @@ public Object successor(String value) {
 public Object predecessor(String value) {
         @SuppressWarnings("unchecked")
         LinkedNode<E> node = (LinkedNode<E>)search(head,value);
-        return node.getPrev().getItem();
+        if(node != head) {
+        	return node.getPrev().getItem();
+        }
+        else {
+        	return null;
+        }
 }
  
 
